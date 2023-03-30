@@ -304,6 +304,7 @@ contract Realstate {
          require(landlists[_landid].LandPrice == address(this).balance , "Insufficient Amount");
          payable(landlists[_landid].LandOwner).transfer(address(this).balance);
          landlists[_landid].LandOwner == msg.sender;
+         //hjhjh
    }
 
 }
