@@ -412,16 +412,16 @@ contract Realstate {
             landlists[_landid].LandOwner != msg.sender,
             " Buyyer are also owner of this land"
         );
-        if (landlists[_landid].LandPrice <= address(this).balance) {
-            payable(landlists[_landid].LandOwner).transfer(
+        if (landlists[_landid].LandPrice <= address(this).balance) {     // if Contract Balance is Greather than Land Price than then If bOdy Execeute 
+            payable(landlists[_landid].LandOwner).transfer(               //     Transfer Landprice to Current Owner
                 landlists[_landid].LandPrice
             );
-            landlists[_landid].LandOwner = msg.sender;
-            payable(msg.sender).transfer(address(this).balance);
+            landlists[_landid].LandOwner = msg.sender;                // Change Ownership in Landlist Mapping
+            payable(msg.sender).transfer(address(this).balance);     // Reamining Amount Send to Buyyer who send Greather Amount
 
-            emit Status("Ownership has been Changed", msg.sender);
+            emit Status("Ownership has been Changed", msg.sender);     // Event Call
         } else {
-            payable(msg.sender).transfer(address(this).balance);
+            payable(msg.sender).transfer(address(this).balance);         // If Contract Amount less than transaction reverted and return the Amount 
             revert InsufficientBalance(
                 "  Insuffiecient Amount ,  Balance has Been Reverted"
             );
