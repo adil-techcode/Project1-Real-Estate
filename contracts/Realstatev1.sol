@@ -56,7 +56,7 @@ contract Realstate {
     landInspectorDetail public Land_Inspector; // This Struct type Varaible store Information about Inspector
 
     event Status(string, address); // This want display when Transcation Done
-
+    error InsufficientBalance(string);
     //
     //
     //
@@ -404,20 +404,27 @@ contract Realstate {
         LandNotRegistered(_landid)
         BuyyerNotRegistered(msg.sender)
     {
-        require(landlists[_landid].isVerified == true, "Land are Not Verified");
-        require(
-            Buyyerlist[msg.sender].isVerified == true,
-            "Buyyer are not Verified"
-        );
-        require(
-            landlists[_landid].LandPrice < address(this).balance,
-            "Insufficient Amount"
-        );
-        payable(landlists[_landid].LandOwner).transfer(
-            landlists[_landid].LandPrice
-        );
-        landlists[_landid].LandOwner = msg.sender;
+        require(landlists[_landid].isVerified == true &&  Buyyerlist[msg.sender].isVerified == true, " Land 0r Buyyer  are Not Verified");
+    
 
-        emit Status("Ownership has been Changed", msg.sender);
+        require(msg.value > 0, "Please Enter Amount To pay");
+        require(
+            landlists[_landid].LandOwner != msg.sender,
+            " Buyyer are also owner of this land"
+        );
+        if (landlists[_landid].LandPrice <= address(this).balance) {
+            payable(landlists[_landid].LandOwner).transfer(
+                landlists[_landid].LandPrice
+            );
+            landlists[_landid].LandOwner = msg.sender;
+            payable(msg.sender).transfer(address(this).balance);
+
+            emit Status("Ownership has been Changed", msg.sender);
+        } else {
+            payable(msg.sender).transfer(address(this).balance);
+            revert InsufficientBalance(
+                "  Insuffiecient Amount ,  Balance has Been Reverted"
+            );
+        }
     }
 }
