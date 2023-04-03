@@ -415,7 +415,7 @@ contract Realstate {
         require(landlists[_landid].LandPrice == address(this).balance," Please Enter Correct Amount") ;    // if Contract Balance equal Land Price than then If bOdy Execeute 
         (bool transactionStatus , bytes memory _respond) = payable(landlists[_landid].LandOwner).call{value:msg.value,gas:2000}("");            //     Transfer Landprice to Current Owner
             landlists[_landid].LandOwner = msg.sender;                // Change Ownership in Landlist Mapping
-             respond = _respond;
+             respond = _respond;                                 // get respond save in state varables
             require(transactionStatus,"Transaction Failed");  
             emit Status("Ownership has been Changed", msg.sender);     // Event Call
         
