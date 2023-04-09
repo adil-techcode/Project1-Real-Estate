@@ -3,6 +3,7 @@
 pragma solidity ^0.8.18;
 
 contract Realstate {
+
     /* This Struct  contains details related to  land such as
     LandId, LandOwner, Area, City, State, LandPrice, and whether it is verified or not. */
     struct landDetail {
@@ -62,8 +63,11 @@ contract Realstate {
     //
     //
 
-    /*      Modifier    */
-
+     /*      Modifier    */
+                        
+    /*
+   The "OnlyLandInspector()" modifier restricts access to a specific function to the address of the Land Inspector.
+    */                           
     modifier OnlyLandInspector() {
         require(
             Land_Inspector.LandInspectorAddress == msg.sender,
@@ -72,6 +76,10 @@ contract Realstate {
         _;
     }
 
+   
+    /*
+    The "LandInspectorNotAllowed()" modifier is used to prevent the Land Inspector from performing a specific function or method in a smart contract. 
+    */                           
     modifier LandInspectorNotAllowed() {
         require(
             Land_Inspector.LandInspectorAddress != msg.sender,
@@ -80,6 +88,9 @@ contract Realstate {
         _;
     }
 
+ /*
+  The "BuyyerNotAllowed()" modifier is used to prevent a buyer from performing a specific function or method in a smart contract
+    */                           
     modifier BuyyerNotAllowed() {
         require(
             Buyyerlist[msg.sender].Buyyer_address != msg.sender,
@@ -88,6 +99,9 @@ contract Realstate {
         _;
     }
 
+ /*
+  The "SellerNotAllowed()" modifier is used to prevent a Seller from performing a specific function or method in a smart contract
+    */                           
     modifier SellerNotAllowed() {
         require(
             Sellerlist[msg.sender].Seller_address != msg.sender,
@@ -96,6 +110,12 @@ contract Realstate {
         _;
     }
 
+ /*
+    The "SellerNotRegistered()" modifier ensures that only registered sellers can perform specific functions
+   in a smart contract by checking if the seller's address is in the "Sellerlist".
+    */   
+
+
     modifier SellerNotRegistered(address _sellerAddress) {
         require(
             Sellerlist[_sellerAddress].Seller_address == _sellerAddress,
@@ -103,6 +123,13 @@ contract Realstate {
         );
         _;
     }
+
+
+ /*
+    The "BuyyerNotRegistered()" modifier checks if the buyer's address is in the "Buyyerlist" to ensure 
+    only registered buyers can access specific functions in a smart contract.
+    */ 
+
     modifier BuyyerNotRegistered(address _BuyyerAddress) {
         require(
             Buyyerlist[_BuyyerAddress].Buyyer_address == _BuyyerAddress,
@@ -111,15 +138,22 @@ contract Realstate {
         _;
     }
 
+ /*
+   The "LandNotRegistered()" modifier ensures that only registered land can be accessed 
+   or modified in a smart contract by checking if the land ID is in the "landlists".
+    */ 
+
     modifier LandNotRegistered(uint256 _id) {
         require(landlists[_id].LandId == _id, "Land are not Registered");
         _;
     }
 
-    //
-    //
-    //
-    //  Constructor for Adding Information of Land Inspector
+    
+   
+    /*
+   Constructor for Adding Information of Land Inspector
+    */ 
+
     constructor() {
         Land_Inspector.LandInspectorAddress = msg.sender;
         Land_Inspector.Id = 520;
@@ -128,10 +162,20 @@ contract Realstate {
         Land_Inspector.Designation = "SDO";
     }
 
-    //
-    //
-    //
-    // Function For Register Seller
+  
+/*
+     * @dev RegisterSeller is used to register Seller.
+     * Requirement:
+     * - This function can be called by Seller
+     * @param _Name - _SellerName 
+     * @param _Age -  _SellerAge
+     * @param _City - _SellerCity  
+     * @param _CNIC -  _SellerCnic
+     * @param _Email -  _SellerEmail
+     *
+     * Emits a {Status} event.
+    */
+
     function RegisterSeller(
         string memory _Name,
         uint8 _Age,
@@ -157,10 +201,23 @@ contract Realstate {
         emit Status("Seller Has Been Registered", msg.sender);
     }
 
-    //
-    //
-    //
-    //    Function For Register Buyyer
+  
+
+/*
+     * @dev RegisterBuyyer is used to register Buyyer.
+     * Requirement:
+     * - This function can be called by Buyyer
+     * @param _Name - _BuyyerName 
+     * @param _Age -  _BuyyerAge
+     * @param _City - _BuyyerCity  
+     * @param _CNIC -  _BuyyerCnic
+     * @param _Email -  _BuyyerEmail
+     *
+     * Emits a {Status} event.
+    */
+
+
+
     function RegisterBuyyer(
         string memory _Name,
         uint8 _Age,
@@ -186,11 +243,21 @@ contract Realstate {
         emit Status("Buyyer Has Been Registered", msg.sender);
     }
 
-    //
-    //
-    //
 
-    //             Function for Update Seller
+    /*
+     * @dev UpdateSeller is used to Update Seller.
+     * Requirement:
+     * - This function can be called by RegisteredSeller
+     * @param _Name - _SellerName 
+     * @param _Age -  _SellerAge
+     * @param _City - _SellerCity  
+     * @param _CNIC -  _SellerCnic
+     * @param _Email -  _SellerEmail
+     *
+     * Emits a {Status} event.
+    */
+
+
     function UpdateSeller(
         string memory _Name,
         uint8 _Age,
@@ -216,11 +283,24 @@ contract Realstate {
         emit Status("Seller Has Been Updated", msg.sender);
     }
 
-    //
-    //
-    //
+    
 
-    //      Function for Update Buyyer
+
+    /*
+     * @dev UpdateSeller is used to Update Buyyer.
+     * Requirement:
+     * - This function can be called by RegisteredBuyyer
+     * @param _Name - _BuyyerName 
+     * @param _Age -  _BuyyerAge
+     * @param _City - _BuyyerCity  
+     * @param _CNIC -  _BuyyerCnic
+     * @param _Email -  _BuyyerEmail
+     *
+     * Emits a {Status} event.
+    */
+
+
+
     function UpdateBuyyer(
         string memory _Name,
         uint8 _Age,
@@ -246,12 +326,14 @@ contract Realstate {
         emit Status("Buyyer Has Been Upadted ", msg.sender);
     }
 
-    //
-    //
-    //
-    //   Function For Verify SEller
+   /* 
+ * "VerifySeller()" function verifies a Seller's address.
+*  Only the Land Inspector can execute this function.
+*  It checks if the buyer is not already registered, sets "isVerified" to true if not, and logs the registration.
+* @param _sellerAddress- for sellerAddress to verify  
+*/
 
-    function VerifySeller(bool permission, address _sellerAddress)
+    function VerifySeller( address _sellerAddress)
         public
         OnlyLandInspector
         SellerNotRegistered(_sellerAddress)
@@ -261,16 +343,21 @@ contract Realstate {
             " Seller Already Verified"
         );
 
-        Sellerlist[_sellerAddress].isVerified = permission;
+        Sellerlist[_sellerAddress].isVerified = true;
         emit Status("Seller Has Been Verified", msg.sender);
     }
 
-    //
-    //
-    //
-    //                Function For Verify Buyyer
+   
 
-    function VerifyBuyyer(bool permission, address _BuyyerAddress)
+ /* 
+ * "VerifyBuyyer()" function verifies a buyer's address.
+*  Only the Land Inspector can execute this function.
+*  It checks if the buyer is not already registered, sets "isVerified" to true if not, and logs the registration.
+* @param _BuyyerAddress - for BuyyerAdddress to verify
+*/
+
+
+    function VerifyBuyyer( address _BuyyerAddress)
         public
         OnlyLandInspector
         BuyyerNotRegistered(_BuyyerAddress)
@@ -279,14 +366,17 @@ contract Realstate {
             Buyyerlist[_BuyyerAddress].isVerified == false,
             " Buyyer Already Verified"
         );
-        Buyyerlist[_BuyyerAddress].isVerified = permission;
+        Buyyerlist[_BuyyerAddress].isVerified = true;
         emit Status("Buyyer Has Been Registered", msg.sender);
     }
 
-    //
-    //
-    //
-    //  Function for get seller information Struct
+   
+    /*
+       * "GetSellerDetail()" function returns the details of a registered seller in the contract.
+       *  It's a read-only function accessible by any user using the "view" keyword.
+       *  The "SellerNotRegistered" modifier ensures that the seller's address is registered in the "Sellerlist".
+       * @param _sellerAddress -  seller's address as an argument and returns a "SellerDetail" struct containing the seller's details.
+    */
 
     function GetSellerDetail(address _sellerAddress)
         public
@@ -297,10 +387,13 @@ contract Realstate {
         return Sellerlist[_sellerAddress];
     }
 
-    //
-    //
-    //
-    //  Function for get Buyyer information Struct
+   
+      /*
+       * "GetBuyyerDetail()" function returns the details of a registered Buuyyer in the contract.
+       *  It's a read-only function accessible by any user using the "view" keyword.
+       *  The "BuyyerNotRegistered" modifier ensures that the Buyyer's address is registered in the "Buyyerlist".
+       * @param _BuyyerAddress -  buyyer's address as an argument and returns a "BuyyerDetail" struct containing the Buyyer's details.
+    */
 
     function GetBuyyerDetail(address _BuyyerAddress)
         public
@@ -315,6 +408,19 @@ contract Realstate {
     //
     //
     //    Function For Add Land .land can be added by verified seller only
+
+      /*
+     * @dev AddLand()  is used to Add Land.
+     * Requirement:
+     * - This function can be called by  verified seller only
+     * @param _LandId - _LandId  
+     * @param _Area -  _Area
+     * @param _City - _City  
+     * @param _State -  _State
+     * @param _LandPrice - _LandPrice
+     *
+     * Emits a {Status} event.
+    */
 
     function AddLand(
         uint256 _LandId,
@@ -350,36 +456,41 @@ contract Realstate {
         emit Status("Land Has Been Added", msg.sender);
     }
 
-    //
-    //
-    //
-    //  Function For Verify Land
+   /* 
+ * "VerifyLand()" function verifies a Verify Land.
+*  Only the Land Inspector can execute this function.
+*  It checks if the land is not already registered, sets "isVerified" to true if not, and logs the registration.
+* @param _id - for Land to verify
+*/
 
-    function VerifyLand(bool permission, uint256 _id)
+    function VerifyLand(uint256 _id)
         public
         OnlyLandInspector
         LandNotRegistered(_id)
     {
         require(landlists[_id].isVerified == false, " Land Already Verified");
-        landlists[_id].isVerified = permission;
+        landlists[_id].isVerified =true;
         emit Status("Land Has Been Verified", msg.sender);
     }
 
-    //
-    //
-    //
-    // Function for check which lands availble to Sale
+    
+   /* 
+* "LandAvailables()" returns an array of land IDs for all available lands in the contract.
+*  It's a read-only function accessible by any user using the "view" keyword.
+*/
 
     function LandAvailables() public view returns (uint256[] memory) {
         return LandAvailable;
     }
 
-    //
-    //
-    //
-    //
-    //
-    // Function in which pass id and get detail of land such as owner or Isverified
+
+   
+  /* 
+* "The "GetLandDetail()" function retrieves detailed information about a specific land, including its ID, seller address, location, price, and availability status.
+*  It uses the "view" keyword to ensure it is read-only and verifies that the land is registered using the "LandNotRegistered()" modifier.
+*  This ensures that the land ID exists in the contract and prevents errors.
+*/
+  
     function GetLandDetail(uint256 _id)
         public
         view
@@ -389,13 +500,29 @@ contract Realstate {
         return landlists[_id];
     }
 
-    //
-    //
-    //
-    //
-    //
-    //
-    // Last Function for Buy land
+
+
+
+
+
+
+
+
+     /*
+     * @dev BuyLand()  is used to Sell Land.
+     * Requirement:
+     * - This function can be called by  verified Buyyer only 
+     * - Verify that the land and buyer are verified and registered  
+     * - Verify that the amount of ether sent by the buyer is greater than zero
+     * -Verify that the buyer is not already the owner of the land
+     * -Verify that the amount of ether sent by the buyer is equal to the land price
+     * -Transfer the ether to the land owner and change the ownership in the mapping
+
+     * @param _LandId - _LandId   for land detail
+    
+     *
+     * Emits a {Status} event.
+    */
 
     function BuyLand(uint256 _landid)
         public
@@ -412,13 +539,11 @@ contract Realstate {
             landlists[_landid].LandOwner != msg.sender,
             " Buyyer are also owner of this land"
         );
-        require(landlists[_landid].LandPrice == address(this).balance," Please Enter Correct Amount") ;    // if Contract Balance equal Land Price than then If bOdy Execeute 
+        require(landlists[_landid].LandPrice == msg.value," Please Enter Correct Amount") ;    // if Contract Balance equal Land Price than then If bOdy Execeute 
         (bool transactionStatus , bytes memory _respond) = payable(landlists[_landid].LandOwner).call{value:msg.value,gas:2000}("");            //     Transfer Landprice to Current Owner
             landlists[_landid].LandOwner = msg.sender;                // Change Ownership in Landlist Mapping
              respond = _respond;                                 // get respond save in state varables
             require(transactionStatus,"Transaction Failed");  
-            emit Status("Ownership has been Changed", msg.sender);     // Event Call
-        
-        
+            emit Status("Ownership has been Changed", msg.sender);     // Event Call                
     }
 }
